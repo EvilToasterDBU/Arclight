@@ -4,6 +4,7 @@ import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.item.ItemStackBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
+import io.izzel.arclight.i18n.ArclightLocale;
 import io.izzel.arclight.mixin.Eject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -76,7 +77,8 @@ public abstract class BrewingStandBlockEntityMixin extends LockableBlockEntityMi
         List<org.bukkit.inventory.ItemStack> brewResults = new ArrayList<>(3);
         for (int i = 0; i < 3; ++i) {
             var input = stacks.get(i);
-            var output = ((WorldBridge) level).bridge$forge$potionBrewMix(input, ing);
+            // The first arg is ingredient, the second is bottle
+            var output = ((WorldBridge) level).bridge$forge$potionBrewMix(ing, input);
             brewResults.add(i, CraftItemStack.asCraftMirror(output.isEmpty() ? input : output));
         }
         BrewingStandBlockEntity entity = ArclightCaptures.getTickingBlockEntity();
