@@ -5,16 +5,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 import java.lang.reflect.Modifier;
 
@@ -72,7 +63,11 @@ public class InventoryImplementer implements Implementer {
             list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(Integer.class), "intValue", "()I", false));
             list.add(new InsnNode(Opcodes.IRETURN));
             list.add(labelNode);
+            // Add frame for stack map validation
+            list.add(new FrameNode(Opcodes.F_SAME1, 0, null, 1, new Object[]{Type.getInternalName(Integer.class)}));
             list.add(new InsnNode(Opcodes.POP));
+            // Manually calculate max stack
+            stackLimitMethod.maxStack = Math.max(2, stackLimitMethod.maxStack);
             stackLimitMethod.instructions.insert(list);
             {
                 MethodNode methodNode = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "setMaxStackSize", "(I)V", null, null);
@@ -83,6 +78,9 @@ public class InventoryImplementer implements Implementer {
                 insnList.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, maxStack.name, maxStack.desc));
                 insnList.add(new InsnNode(Opcodes.RETURN));
                 methodNode.instructions = insnList;
+                // Manually calculate maxs
+                methodNode.maxLocals = 2;
+                methodNode.maxStack = 2;
                 node.methods.add(methodNode);
             }
             return true;
