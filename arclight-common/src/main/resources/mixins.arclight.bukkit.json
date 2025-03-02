@@ -44,6 +44,9 @@
     "RecipeIteratorMixin",
     "Registry_SimpleRegistryMixin",
     "StandardMessengerMixin",
-    "WatchdogThreadMixin"
+    "WatchdogThreadMixin",
+    "util.BlockStateListPopulatorMixin",
+    "util.DelegatedGeneratorAccessMixin",
+    "util.DummyGeneratorAccessMixin"
   ]
 }
